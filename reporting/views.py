@@ -1,5 +1,5 @@
 from django.template.loader import render_to_string
-from weasyprint import HTML
+from weasyprint import HTML,CSS
 from django.http import HttpResponse
 
 # Create your views here.
@@ -18,7 +18,13 @@ def index(request):
             }
 
     html_template = render_to_string("reporting/rajadip_assignment.html",{'data':data})
-    pdf_file = HTML(string=html_template, base_url=request.build_absolute_uri()).write_pdf()
+    
+    css_1 = CSS(string="@page{ @bottom-center{ content:counter(page) } }")
+    css_2 = CSS(string="@page{ @top-center{ content:'This is Commom header' } }")
+
+    pdf_file = HTML(string=html_template, base_url=request.build_absolute_uri()).write_pdf(stylesheets=[css_1,css_2])
+    
+
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = 'filename="home_page.pdf"'
     return response
